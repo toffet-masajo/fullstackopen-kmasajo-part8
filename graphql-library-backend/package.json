@@ -1,0 +1,16 @@
+{
+  "name": "graphql-library-backend",
+  "version": "1.0.0",
+  "description": "GraphQL-server Exercise",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "nodejs",
+    "react",
+    "graphql"
+  ],
+  "author": "Kristoffer Masajo",
+  "license": "ISC"
+}
