@@ -3,8 +3,8 @@ import { useMutation } from "@apollo/client";
 
 import { ALL_AUTHORS, EDIT_BIRTH_YEAR } from "../graphql/queries";
 
-const EditBirthYear = () => {
-  const [name, setName] = useState("");
+const EditBirthYear = ({ names }) => {
+  const [name, setName] = useState(names[0]);
   const [born, setBorn] = useState("");
 
   const [editBirthYear] = useMutation(EDIT_BIRTH_YEAR, {
@@ -18,7 +18,6 @@ const EditBirthYear = () => {
       variables: { name, year: parseInt(born) },
     });
 
-    setName("");
     setBorn("");
   };
 
@@ -27,11 +26,13 @@ const EditBirthYear = () => {
       <h3>Set birthyear</h3>
       <form onSubmit={submit}>
         <div>
-          name
-          <input
-            value={name}
-            onChange={({ target }) => setName(target.value)}
-          />
+          <select value={name} onChange={(e) => setName(e.target.value)}>
+            {names.map((author, idx) => (
+              <option key={idx} value={author}>
+                {author}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           born
