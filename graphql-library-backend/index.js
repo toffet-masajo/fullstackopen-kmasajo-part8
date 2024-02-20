@@ -5,6 +5,7 @@ const { mongoose } = require("mongoose");
 
 const Author = require("./models/Author");
 const Book = require("./models/Book");
+const { GraphQLError } = require("graphql");
 
 require("dotenv").config();
 mongoose.set("strictQuery", false);
@@ -189,12 +190,31 @@ const resolvers = {
   Mutation: {
     addBook: async (root, args) => {
       const { author } = args;
-      const findAuthor = await Author.findOne({ name: author });
-      if (!findAuthor) await Author({ name: author }).save();
-
-      const newAuthor = await Author.findOne({ name: author });
-      const newBook = await Book({ ...args, author: newAuthor._id }).save();
-      return newBook;
+      try {
+        const findAuthor = await Author.findOne({ name: author });
+        if (!findAuthor) await Author({ name: author }).save();
+      } catch (error) {
+        throw new GraphQLError("Adding a new author failed!", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.author,
+            error,
+          },
+        });
+      }
+      try {
+        const newAuthor = await Author.findOne({ name: author });
+        const newBook = await Book({ ...args, author: newAuthor._id }).save();
+        return newBook;
+      } catch (error) {
+        throw new GraphQLError("Adding a new book failed!", {
+          extensions: {
+            code: "BAD_USER_INPUT",
+            invalidArgs: args.title,
+            error,
+          },
+        });
+      }
     },
 
     editAuthor: async (root, args) => {
