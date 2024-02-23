@@ -3,11 +3,12 @@ import { useMutation } from "@apollo/client";
 
 import { ALL_AUTHORS, EDIT_BIRTH_YEAR } from "../graphql/queries";
 
-const EditBirthYear = ({ names }) => {
+const EditBirthYear = ({ names, setError }) => {
   const [name, setName] = useState(names[0]);
   const [born, setBorn] = useState("");
 
   const [editBirthYear] = useMutation(EDIT_BIRTH_YEAR, {
+    onError: (err) => setError(err.graphQLErrors[0].message),
     refetchQueries: [{ query: ALL_AUTHORS }],
   });
 
