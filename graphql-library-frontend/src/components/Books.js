@@ -49,14 +49,14 @@ const Books = (props) => {
             return null;
           })}
         </tbody>
-        <div>
-          {genres.map((genre, idx) => (
-            <button key={idx} onClick={() => setFilter(genre)}>
-              {genre}
-            </button>
-          ))}
-        </div>
       </table>
+      <div>
+        {genres.map((genre, idx) => (
+          <button key={idx} onClick={() => setFilter(genre)}>
+            {genre}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
