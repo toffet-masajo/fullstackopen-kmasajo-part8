@@ -1,40 +1,34 @@
 import { useQuery } from "@apollo/client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-import { ALL_BOOKS } from "../graphql/queries";
+import { ALL_BOOKS, ALL_BOOKS_BY_GENRE } from "../graphql/queries";
 
 const Books = (props) => {
-  const [books, setBooks] = useState([]);
-  const [genres, setGenres] = useState([]);
   const [filter, setFilter] = useState(null);
-  const result = useQuery(ALL_BOOKS, { variables: { genre: filter } });
-
-  useEffect(() => {
-    if (result.data) {
-      const booksDb = result.data.allBooks;
-
-      if (!filter) {
-        const genresList = books.reduce((accumulator, book) => {
-          book.genres.forEach((genre) => {
-            if (!accumulator.includes(genre)) accumulator.push(genre);
-          });
-          return accumulator;
-        }, []);
-        genresList.push("all genres");
-        setGenres(genresList);
-      }
-
-      setBooks(booksDb);
-    }
-  }, [result.data, books, filter]);
+  const allBooksQuery = useQuery(ALL_BOOKS);
+  const filteredBooksQuery = useQuery(ALL_BOOKS_BY_GENRE, {
+    variables: { genre: filter },
+  });
 
   if (!props.show) {
     return null;
   }
 
-  if (result.loading) {
+  if (allBooksQuery.loading || filteredBooksQuery.loading) {
     return <div>loading...</div>;
   }
+
+  const allBooks = allBooksQuery.data.allBooks;
+  const filteredBooks = filteredBooksQuery.data.allBooks;
+  const genresList = [];
+
+  allBooks.map((book) => {
+    book.genres.forEach((genre) => {
+      if (!genresList.includes(genre)) genresList.push(genre);
+    });
+    return book;
+  });
+  genresList.push("all genres");
 
   return (
     <div>
@@ -47,7 +41,7 @@ const Books = (props) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {books.map((book) => {
+          {filteredBooks.map((book) => {
             return (
               <tr key={book.title}>
                 <td>{book.title}</td>
@@ -59,7 +53,7 @@ const Books = (props) => {
         </tbody>
       </table>
       <div>
-        {genres.map((genre, idx) => (
+        {genresList.map((genre, idx) => (
           <button
             key={idx}
             onClick={() => setFilter(genre === "all genres" ? null : genre)}
