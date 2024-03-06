@@ -196,6 +196,12 @@ const resolvers = {
 
   Query: {
     allBooks: async (root, args) => {
+      if (args.author && args.genre) {
+        const author = await Author.findOne({ name: args.author });
+        if (!author) return [];
+        const books = await Book.find({ author: author._id });
+        return books.filter((book) => book.genres.includes(args.genre));
+      }
       if (args.author) {
         const author = await Author.findOne({ name: args.author });
         return await Book.find({ author: author._id });
