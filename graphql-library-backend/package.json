@@ -1,0 +1,31 @@
+{
+  "name": "graphql-library-backend",
+  "version": "1.0.0",
+  "description": "GraphQL-server Exercise",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "nodejs",
+    "react",
+    "graphql"
+  ],
+  "author": "Kristoffer Masajo",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/server": "^4.10.0",
+    "@graphql-tools/schema": "^10.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.4",
+    "express": "^4.18.3",
+    "graphql": "^16.8.1",
+    "graphql-subscriptions": "^2.0.0",
+    "graphql-ws": "^5.15.0",
+    "http": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.1.2",
+    "mongoose-unique-validator": "^5.0.0",
+    "uuid": "^9.0.1"
+  }
+}
