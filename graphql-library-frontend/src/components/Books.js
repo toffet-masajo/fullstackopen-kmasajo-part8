@@ -1,25 +1,24 @@
 import { useQuery } from "@apollo/client";
 import { useState } from "react";
 
-import { ALL_BOOKS, ALL_BOOKS_BY_GENRE } from "../graphql/queries";
+import { ALL_BOOKS } from "../graphql/queries";
 
 const Books = (props) => {
   const [filter, setFilter] = useState(null);
   const allBooksQuery = useQuery(ALL_BOOKS);
-  const filteredBooksQuery = useQuery(ALL_BOOKS_BY_GENRE, {
-    variables: { genre: filter },
-  });
 
   if (!props.show) {
     return null;
   }
 
-  if (allBooksQuery.loading || filteredBooksQuery.loading) {
+  if (allBooksQuery.loading) {
     return <div>loading...</div>;
   }
 
   const allBooks = allBooksQuery.data.allBooks;
-  const filteredBooks = filteredBooksQuery.data.allBooks;
+  const filteredBooks = allBooks.filter((book) =>
+    filter ? book.genres.includes(filter) : true
+  );
   const genresList = [];
 
   allBooks.map((book) => {
