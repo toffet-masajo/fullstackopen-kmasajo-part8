@@ -1,7 +1,8 @@
+const DataLoader = require("dataloader");
 const { GraphQLError } = require("graphql");
 const { PubSub } = require("graphql-subscriptions");
 const jwt = require("jsonwebtoken");
-const { v1: uuid } = require("uuid");
+const { groupBy, map } = require("ramda");
 
 const pubsub = new PubSub();
 
@@ -9,9 +10,22 @@ const Author = require("./models/Author");
 const Book = require("./models/Book");
 const User = require("./models/User");
 
+const booksDataLoader = () => {
+  return new DataLoader(async (authorIds) => {
+    const books = await Book.find({
+      author: { $in: authorIds },
+    });
+    const groupByAuthor = groupBy((book) => book.author, books);
+    return map((bookId) => groupByAuthor[bookId], authorIds);
+  });
+};
+
 const resolvers = {
   Author: {
-    bookCount: async (root) => (await Book.find({ author: root._id })).length,
+    bookCount: async (root, args, ctx) => {
+      const books = await ctx.loaders.booksLoader.load(root._id.toString());
+      return books.length;
+    },
   },
 
   Book: {
@@ -140,4 +154,4 @@ const resolvers = {
   },
 };
 
-module.exports = resolvers;
+module.exports = { resolvers, booksDataLoader };

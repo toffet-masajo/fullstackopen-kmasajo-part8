@@ -16,7 +16,7 @@ const mongoose = require("mongoose");
 
 const User = require("./models/User");
 const typeDefs = require("./schema");
-const resolvers = require("./resolvers");
+const { booksDataLoader, resolvers } = require("./resolvers");
 
 require("dotenv").config();
 mongoose.set("strictQuery", false);
@@ -80,7 +80,7 @@ const start = async () => {
             process.env.SECRET
           );
           const currentUser = await User.findById(decodedToken.id);
-          return { currentUser };
+          return { currentUser, loaders: { booksLoader: booksDataLoader() } };
         }
       },
     })
