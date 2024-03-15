@@ -42,6 +42,7 @@ const resolvers = {
       }
       if (args.author) {
         const author = await Author.findOne({ name: args.author });
+        if (!author) return [];
         return await Book.find({ author: author._id });
       }
       if (args.genre) {
